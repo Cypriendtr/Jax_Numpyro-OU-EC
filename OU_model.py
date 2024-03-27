@@ -19,13 +19,11 @@ from collections import namedtuple
         
 theta_ou = namedtuple(
             typename = "Theta_OU",
-            field_names = "J_OU mu_dt theta corr_OU".split(" ")
+            field_names = "J_OU corr_OU".split(" ")
             )
 
 OU_defaut_param = theta_ou(
-                        J_OU = jnp.array([[0.0, 0.8], [0.5, 0.0]]),
-                        theta = jnp.array([0.1, 0.2]),
-                        mu_dt = jnp.array([0.5, 0.4]),
+                        J_OU = jnp.array([[-0.8, 0.8], [0.5, -0.8]]),
                         corr_OU = jnp.array([[1.0, 0.5], [0.5, 1.0]])
                         )
 
@@ -40,10 +38,6 @@ class OU() :
     def __init__(self, p):
         # Assertion on data
         assert p.J_OU != None, "The jax.Array jacobian matrix 'J_OU' must be defined"
-
-        assert p.mu_dt != None, "The jax.Array 'mu_dt' must be defined"
-
-        assert p.theta != None, "The jax.Array 'theta' must be defined"
 
         assert p.corr_OU != None, "The jax.Array noise corrélaton between region 'corr_OU' must be defined"
 
@@ -68,7 +62,7 @@ class OU() :
         -------------
         jax.Array of the dV/dt for every regions 
         """
-        return p.theta * (p.mu_dt - jnp.dot(x, p.J_OU))
+        return jnp.dot(x, p.J_OU)
 
     @jit
     def diffusion_OU(x, p):
