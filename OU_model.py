@@ -54,7 +54,7 @@ class OU() :
         x   : State of the different regions.
             jax.Array of shape N, the number of regions.
         p   : Parameters of the equations
-            Namedtuple, containe the respective parameters : J_OU, mu_dt, theta, corr_OU
+            Namedtuple, containe the respective parameters : J_OU, corr_OU
 
             ! Warning ! -> The number of regions if defined by the shape of the Jacobian & noise corrélation matrices
 
@@ -62,7 +62,7 @@ class OU() :
         -------------
         jax.Array of the dV/dt for every regions 
         """
-        return jnp.dot(x, p.J_OU)
+        return jnp.real(jnp.dot(x, p.J_OU))
 
     @jit
     def diffusion_OU(x, p):
@@ -74,7 +74,7 @@ class OU() :
         x   : State of the different regions.
             jax.Array of shape N, the number of regions.
         p   : Parameters of the equations
-            Namedtuple, containe the respective parameters : J_OU, mu_dt, theta, corr_OU
+            Namedtuple, containe the respective parameters : J_OU, corr_OU
 
             ! Warning ! -> The number of regions if defined by the shape of the Jacobian & noise corrélation matrices
 
@@ -84,4 +84,4 @@ class OU() :
         """
 
         n = jnp.shape(x)[0]
-        return jnp.dot(p.corr_OU,jnp.ones(n))
+        return jnp.real(jnp.sqrt(jnp.dot(p.corr_OU,jnp.ones(n))))
